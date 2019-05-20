@@ -46,3 +46,30 @@ Bonus_2 = Lasso.coef_
 x_test1 = x_test.copy()
 x_test1 = x_test[:,[0,4,6,7,8,9,10]]
 x_train1 = x_train[:,[0,4,6,7,8,9,10]]
+
+KNN = KNeighborsRegressor()
+KNN.fit(x_train1, y_train)
+y_pred = KNN.predict(x_test1)
+mean_squared_error(y_test, y_pred)
+
+X_validate, x_test_1, y_validate, y_test_1 = train_test_split(x_train1, y_train, test_size=0.5, random_state=42)
+
+from sklearn.model_selection import GridSearchCV
+neighbors = np.arange(1, 30, 1)
+ps = np.arange(1, 10, 1)
+
+KNN = KNeighborsRegressor()
+grid = GridSearchCV(estimator=KNN, param_grid=[dict(n_neighbors = neighbors),
+                                               dict(p = ps)])
+grid.fit(X_validate, y_validate)
+print(grid)
+print(grid.best_score_)
+print(grid.best_estimator_.n_neighbors)
+print(grid.best_estimator_.p) 
+
+n_n = grid.best_estimator_.n_neighbors
+p_p = grid.best_estimator_.p
+KNN_new = KNeighborsRegressor(n_neighbors = n_n, p= p_p)
+KNN_new.fit(x_train1, y_train)
+y_pred = KNN_new.predict(x_test1)
+mean_squared_error(y_test, y_pred)
